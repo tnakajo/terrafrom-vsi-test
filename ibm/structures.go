@@ -1,6 +1,7 @@
 package ibm
 
 import (
+	"encoding/json"
 	"fmt"
 
 	"github.com/IBM-Bluemix/bluemix-go/api/iampap/iampapv1"
@@ -175,4 +176,21 @@ func flattenIAMPolicyRoles(list []iampapv1.Roles) []map[string]interface{} {
 		result = append(result, l)
 	}
 	return result
+}
+
+func normalizeJSONString(jsonString interface{}) (string, error) {
+	var j interface{}
+	if jsonString == nil || jsonString.(string) == "" {
+		return "", nil
+	}
+	s := jsonString.(string)
+	err := json.Unmarshal([]byte(s), &j)
+	if err != nil {
+		return s, err
+	}
+	bytes, err := json.Marshal(j)
+	if err != nil {
+		return "", err
+	}
+	return string(bytes[:]), nil
 }

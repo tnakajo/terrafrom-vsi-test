@@ -47,6 +47,24 @@ func Provider() terraform.ResourceProvider {
 				Description: "The timeout (in seconds) to set for any SoftLayer API calls made.",
 				DefaultFunc: schema.MultiEnvDefaultFunc([]string{"SL_TIMEOUT", "SOFTLAYER_TIMEOUT"}, 60),
 			},
+			"openwhisk_auth_key": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "The Openwhisk API Key",
+				DefaultFunc: schema.MultiEnvDefaultFunc([]string{"WSK_AUTH_KEY", "OPENWHISK_AUTH_KEY"}, ""),
+			},
+			"openwhisk_namespace": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "The Openwhisk API Key",
+				DefaultFunc: schema.MultiEnvDefaultFunc([]string{"WSK_NAMESPACE", "OPENWHISK_NAMESPACE"}, "_"),
+			},
+			"openwhisk_endpoint": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "The Openwhisk endpoint",
+				DefaultFunc: schema.MultiEnvDefaultFunc([]string{"WSK_NAMESPACE", "OPENWHISK_NAMESPACE"}, "openwhisk.ng.bluemix.net"),
+			},
 		},
 
 		DataSourcesMap: map[string]*schema.Resource{
@@ -103,6 +121,7 @@ func Provider() terraform.ResourceProvider {
 			"ibm_network_public_ip":         resourceIBMNetworkPublicIp(),
 			"ibm_network_vlan":              resourceIBMNetworkVlan(),
 			"ibm_object_storage_account":    resourceIBMObjectStorageAccount(),
+			"ibm_openwhisk_action":          resourceIBMOpenWhiskAction(),
 			"ibm_service_instance":          resourceIBMServiceInstance(),
 			"ibm_service_key":               resourceIBMServiceKey(),
 			"ibm_space":                     resourceIBMSpace(),
@@ -122,6 +141,9 @@ func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 	bluemixTimeout := d.Get("bluemix_timeout").(int)
 	region := d.Get("region").(string)
 
+	wskNameSpace := d.Get("openwhisk_namespace").(string)
+	wskAuthKey := d.Get("openwhisk_auth_key").(string)
+
 	config := Config{
 		BluemixAPIKey:        bluemixAPIKey,
 		Region:               region,
@@ -129,6 +151,8 @@ func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 		SoftLayerTimeout:     time.Duration(softlayerTimeout) * time.Second,
 		SoftLayerUserName:    softlayerUsername,
 		SoftLayerAPIKey:      softlayerAPIKey,
+		OpenWhiskNameSpace:   wskNameSpace,
+		OpenWhiskAuthKey:     wskAuthKey,
 		RetryCount:           3,
 		RetryDelay:           30 * time.Millisecond,
 		SoftLayerEndpointURL: SoftlayerRestEndpoint,

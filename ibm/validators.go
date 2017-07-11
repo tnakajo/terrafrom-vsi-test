@@ -114,7 +114,12 @@ func validateAppZipPath(v interface{}, k string) (ws []string, errors []error) {
 		errors = append(errors, fmt.Errorf(
 			"%q (%q) doesn't exist", k, path))
 	}
-
 	return
+}
 
+func validateJSONString(v interface{}, k string) (ws []string, errors []error) {
+	if _, err := normalizeJSONString(v); err != nil {
+		errors = append(errors, fmt.Errorf("%q contains an invalid JSON: %s", k, err))
+	}
+	return
 }

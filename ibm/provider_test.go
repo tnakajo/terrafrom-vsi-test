@@ -70,4 +70,10 @@ func testAccPreCheck(t *testing.T) {
 	if v := os.Getenv("SL_USERNAME"); v == "" {
 		t.Fatal("SL_USERNAME must be set for acceptance tests")
 	}
+	if v := os.Getenv("WSK_AUTH_KEY"); v == "" {
+		t.Fatal("WSK_AUTH_KEY must be set for acceptance tests")
+	}
+	if v := os.Getenv("WSK_NAMESPACE"); v == "" {
+		t.Fatal("WSK_NAMESPACE must be set for acceptance tests")
+	}
 }
